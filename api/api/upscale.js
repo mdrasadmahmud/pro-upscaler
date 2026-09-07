@@ -7,11 +7,11 @@ export default async function handler(req, res) {
     const apiToken = process.env.REPLICATE_API_TOKEN;
 
     if (!apiToken) {
-        return res.status(500).json({ error: 'REPLICATE_API_TOKEN environment variable is missing on Vercel.' });
+        return res.status(500).json({ error: 'REPLICATE_API_TOKEN is missing on Vercel.' });
     }
 
     try {
-        // Using a versatile model supporting high-res enhancement
+        // Replicate AI model call for video/media processing
         const response = await fetch("https://api.replicate.com/v1/predictions", {
             method: "POST",
             headers: {
@@ -28,7 +28,14 @@ export default async function handler(req, res) {
             })
         });
 
-        const prediction = await response.json();
+        const textResponse = await response.text();
+        let prediction;
+        
+        try {
+            prediction = JSON.parse(textResponse);
+        } catch (e) {
+            return res.status(500).json({ error: 'Invalid response from AI server: ' + textResponse.substring(0, 100) });
+        }
 
         if (prediction.error) {
             return res.status(500).json({ error: prediction.error });
@@ -48,7 +55,7 @@ export default async function handler(req, res) {
             if (status === 'succeeded') {
                 outputUrl = pollData.output;
             } else if (status === 'failed') {
-                throw new Error('AI Video Upscaling process failed.');
+                throw new Error('AI processing failed.');
             }
         }
 
