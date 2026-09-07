@@ -1,9 +1,17 @@
+export const config = {
+    api: {
+        bodyParser: {
+            sizeLimit: '50mb',
+        },
+    },
+};
+
 export default async function handler(req, res) {
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { file, resolution } = req.body;
+    const { videoUrl, resolution } = req.body;
     const apiToken = process.env.REPLICATE_API_TOKEN;
 
     if (!apiToken) {
@@ -11,7 +19,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        // Replicate AI model call for video/media processing
+        // Replicate video upscaling / frame enhancement model
         const response = await fetch("https://api.replicate.com/v1/predictions", {
             method: "POST",
             headers: {
@@ -20,30 +28,23 @@ export default async function handler(req, res) {
                 "Prefer": "wait"
             },
             body: JSON.stringify({
-                version: "cjwbw/real-esrgan:d0ee3d708c9b911f122a4ad90046c5d26a0293b99476d697f6bb7f2e251ce2d4",
+                version: "nightmareai/real-esrgan:42fed1c4974146d4d2414e2be2c5277c7fcf05fcc3a73abf4161069f738c4d79",
                 input: {
-                    image: file,
-                    upscale: 4
+                    img: videoUrl,
+                    scale: resolution === '16K' ? 4 : (resolution === '8K' ? 4 : 2)
                 }
             })
         });
 
-        const textResponse = await response.text();
-        let prediction;
-        
-        try {
-            prediction = JSON.parse(textResponse);
-        } catch (e) {
-            return res.status(500).json({ error: 'Invalid response from AI server: ' + textResponse.substring(0, 100) });
+        const data = await response.json();
+
+        if (data.error) {
+            return res.status(500).json({ error: data.error });
         }
 
-        if (prediction.error) {
-            return res.status(500).json({ error: prediction.error });
-        }
-
-        let outputUrl = prediction.output;
-        let statusUrl = prediction.urls?.get;
-        let status = prediction.status;
+        let outputUrl = data.output;
+        let statusUrl = data.urls?.get;
+        let status = data.status;
         
         while (status !== 'succeeded' && status !== 'failed' && statusUrl) {
             await new Promise(resolve => setTimeout(resolve, 2000));
@@ -55,7 +56,7 @@ export default async function handler(req, res) {
             if (status === 'succeeded') {
                 outputUrl = pollData.output;
             } else if (status === 'failed') {
-                throw new Error('AI processing failed.');
+                throw new Error('Video AI processing failed.');
             }
         }
 
