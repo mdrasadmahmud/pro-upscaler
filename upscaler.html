@@ -7,78 +7,90 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-50 flex flex-col min-h-screen font-sans text-gray-800">
+<body class="bg-[#0f172a] text-gray-100 flex flex-col min-h-screen font-sans">
 
     <!-- Header Section -->
-    <header class="bg-white shadow-md py-4 px-8 flex justify-between items-center border-b border-gray-100">
+    <header class="bg-[#1e293b] border-b border-gray-800 py-4 px-8 flex justify-between items-center shadow-md">
         <div class="flex items-center gap-3">
             <div class="bg-blue-600 text-white p-2.5 rounded-xl shadow-lg flex items-center justify-center">
                 <i class="fa-solid fa-wand-magic-sparkles text-xl"></i>
             </div>
-            <h1 class="text-2xl font-black tracking-tight text-gray-900">Pro<span class="text-blue-600">Upscaler</span></h1>
+            <h1 class="text-2xl font-black tracking-tight text-white">Pro<span class="text-blue-500">Upscaler</span></h1>
         </div>
-        <div class="flex items-center gap-2 bg-blue-50 border border-blue-200 py-1.5 px-4 rounded-full shadow-sm">
-            <i class="fa-solid fa-circle-user text-blue-600"></i>
-            <span class="text-blue-900 text-sm font-bold tracking-wide">
+        <div class="flex items-center gap-2 bg-[#0f172a] border border-gray-700 py-1.5 px-4 rounded-full shadow-inner">
+            <i class="fa-solid fa-circle-user text-blue-400"></i>
+            <span class="text-gray-200 text-sm font-bold tracking-wide">
                 Md Rashad Mahmud
             </span>
         </div>
     </header>
 
-    <!-- Main Container -->
-    <main class="flex-grow max-w-4xl w-full mx-auto p-6 mt-8">
-        <div class="bg-white rounded-3xl shadow-xl p-8 border border-gray-100 transition-all">
-            <h2 class="text-xl font-bold mb-6 text-gray-800 flex items-center gap-3">
-                <i class="fa-solid fa-cloud-arrow-up text-blue-600 text-2xl"></i> Upload Image or Video for AI Upscaling
-            </h2>
+    <!-- Main Content Layout -->
+    <main class="flex-grow max-w-5xl w-full mx-auto p-6 mt-6">
+        
+        <!-- Platform/Format Selection Tabs -->
+        <div class="flex justify-center gap-3 mb-6 flex-wrap">
+            <button class="tab-btn bg-blue-600 text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg transition" data-target="image">
+                <i class="fa-solid fa-image"></i> Images (JPG/PNG)
+            </button>
+            <button class="tab-btn bg-[#1e293b] text-gray-400 hover:text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 border border-gray-700 transition" data-target="vector">
+                <i class="fa-solid fa-vector-square"></i> Vectors
+            </button>
+            <button class="tab-btn bg-[#1e293b] text-gray-400 hover:text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 border border-gray-700 transition" data-target="video">
+                <i class="fa-solid fa-video"></i> Videos
+            </button>
+        </div>
 
-            <!-- Upload Box -->
-            <div id="drop-zone" class="border-3 border-dashed border-blue-200 rounded-2xl p-10 text-center bg-blue-50/50 hover:bg-blue-50 transition cursor-pointer relative group">
+        <!-- Upload Card Box -->
+        <div class="bg-[#1e293b] rounded-3xl shadow-2xl p-8 border border-gray-800 relative">
+            
+            <div id="drop-zone" class="border-2 border-dashed border-gray-600 rounded-2xl p-12 text-center bg-[#0f172a]/50 hover:bg-[#0f172a] transition cursor-pointer relative group">
                 <input type="file" id="file-input" class="absolute inset-0 opacity-0 cursor-pointer" accept="image/*,video/*">
-                <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition shadow-sm">
-                    <i class="fa-solid fa-file-arrow-up text-2xl"></i>
+                <div class="w-16 h-16 bg-blue-500/10 text-blue-400 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition shadow-inner">
+                    <i class="fa-solid fa-cloud-arrow-up text-2xl"></i>
                 </div>
-                <p class="text-gray-700 font-semibold text-lg">Drag & drop your file here, or <span class="text-blue-600 underline">Browse</span></p>
-                <p class="text-gray-400 text-sm mt-2">Supports High-Resolution PNG, JPG, MP4, MOV</p>
+                <p class="text-gray-200 font-semibold text-lg">Drop your files here, or <span class="text-blue-400 underline">Browse files</span></p>
+                <p class="text-gray-400 text-sm mt-2">JPG, PNG, WEBP, MP4 supported — high quality AI enhancement</p>
             </div>
 
-            <!-- Preview Section (Hidden initially) -->
-            <div id="preview-container" class="hidden mt-8 text-center bg-gray-50 p-6 rounded-2xl border border-gray-200">
-                <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">Selected File Preview</h3>
-                <div id="media-preview" class="max-h-72 mx-auto rounded-xl overflow-hidden border border-gray-300 shadow-md inline-block bg-white p-2"></div>
+            <!-- Preview Section (Hidden Initially) -->
+            <div id="preview-container" class="hidden mt-8 text-center bg-[#0f172a] p-6 rounded-2xl border border-gray-800">
+                <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Selected File Preview</h3>
+                <div id="media-preview" class="max-h-72 mx-auto rounded-xl overflow-hidden border border-gray-700 shadow-md inline-block bg-gray-900 p-2"></div>
                 
-                <!-- Action Buttons: Clear & Upscale -->
-                <div class="flex justify-center gap-4 mt-6">
-                    <button id="clear-btn" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2.5 px-6 rounded-xl transition shadow-md flex items-center gap-2">
-                        <i class="fa-solid fa-trash-can"></i> Clear File
+                <!-- Action Controls: Clear, Download, Upscale -->
+                <div class="flex justify-center items-center gap-4 mt-6 flex-wrap">
+                    <button id="clear-btn" class="bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 font-semibold py-2.5 px-6 rounded-xl transition flex items-center gap-2">
+                        <i class="fa-solid fa-trash-can"></i> Clear
                     </button>
-                    <button id="upscale-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-8 rounded-xl transition shadow-lg flex items-center gap-2">
+                    <button id="upscale-btn" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-2.5 px-8 rounded-xl transition shadow-lg flex items-center gap-2">
                         <i class="fa-solid fa-bolt"></i> Start Upscaling (4K/16K)
                     </button>
                 </div>
             </div>
 
-            <!-- Result Section (Hidden initially) -->
-            <div id="result-container" class="hidden mt-8 text-center border-t border-gray-200 pt-8">
-                <div class="inline-flex items-center gap-2 bg-green-100 text-green-800 px-4 py-1.5 rounded-full text-sm font-bold mb-4">
+            <!-- Result Section (Hidden Initially) -->
+            <div id="result-container" class="hidden mt-8 text-center border-t border-gray-800 pt-8">
+                <div class="inline-flex items-center gap-2 bg-green-500/20 text-green-400 border border-green-500/30 px-4 py-1.5 rounded-full text-sm font-bold mb-4">
                     <i class="fa-solid fa-circle-check"></i> Upscaling Successful!
                 </div>
-                <div id="result-preview" class="max-h-80 mx-auto rounded-xl overflow-hidden border border-gray-200 shadow-lg inline-block bg-white p-2 mb-6"></div>
+                <div id="result-preview" class="max-h-80 mx-auto rounded-xl overflow-hidden border border-gray-700 shadow-lg inline-block bg-gray-900 p-2 mb-6"></div>
                 <div>
-                    <a id="download-btn" href="#" download="upscaled-output.png" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-xl transition shadow-lg inline-flex items-center gap-2">
+                    <a id="download-btn" href="#" download="upscaled-output.png" class="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-8 rounded-xl transition shadow-lg inline-flex items-center gap-2">
                         <i class="fa-solid fa-download"></i> Download Upscaled File
                     </a>
                 </div>
             </div>
+
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white text-center py-5 border-t border-gray-200 text-gray-500 text-sm font-medium">
-        &copy; 2026 Pro Upscaler. Developed by <strong class="text-gray-800">Md Rashad Mahmud</strong>.
+    <footer class="bg-[#1e293b] text-center py-5 border-t border-gray-800 text-gray-400 text-sm font-medium">
+        &copy; 2026 Pro Upscaler. Designed & Developed with passion by <strong class="text-white">Md Rashad Mahmud</strong>.
     </footer>
 
-    <!-- JavaScript for Interactivity -->
+    <!-- JavaScript Scripting -->
     <script>
         const fileInput = document.getElementById('file-input');
         const previewContainer = document.getElementById('preview-container');
@@ -88,8 +100,20 @@
         const resultContainer = document.getElementById('result-container');
         const resultPreview = document.getElementById('result-preview');
         const downloadBtn = document.getElementById('download-btn');
+        const tabBtns = document.querySelectorAll('.tab-btn');
 
         let selectedFile = null;
+
+        // Tab Switching Logic
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.replace('bg-blue-600', 'bg-[#1e293b]'));
+                tabBtns.forEach(b => b.classList.add('text-gray-400', 'border', 'border-gray-700'));
+                btn.classList.replace('bg-[#1e293b]', 'bg-blue-600');
+                btn.classList.remove('text-gray-400', 'border', 'border-gray-700');
+                btn.classList.add('text-white');
+            });
+        });
 
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
