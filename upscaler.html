@@ -30,14 +30,11 @@
         
         <!-- Format Selection Tabs -->
         <div class="flex justify-center gap-4 mb-6">
-            <button class="format-tab bg-blue-600 text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg transition" data-format="jpg">
-                <i class="fa-solid fa-file-image"></i> JPG Format
+            <button class="format-tab bg-blue-600 text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg transition" data-type="image">
+                <i class="fa-solid fa-file-image"></i> Images (JPG / PNG)
             </button>
-            <button class="format-tab bg-[#1e293b] text-gray-400 hover:text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 border border-gray-700 transition" data-format="png">
-                <i class="fa-solid fa-file-image"></i> PNG Format
-            </button>
-            <button class="format-tab bg-[#1e293b] text-gray-400 hover:text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 border border-gray-700 transition" data-format="video">
-                <i class="fa-solid fa-file-video"></i> Video (MP4)
+            <button class="format-tab bg-[#1e293b] text-gray-400 hover:text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 border border-gray-700 transition" data-type="video">
+                <i class="fa-solid fa-file-video"></i> Video (MP4 / MOV)
             </button>
         </div>
 
@@ -50,7 +47,7 @@
                     <i class="fa-solid fa-cloud-arrow-up text-2xl"></i>
                 </div>
                 <p class="text-gray-200 font-semibold text-lg">Drop your file here, or <span class="text-blue-400 underline">Browse files</span></p>
-                <p class="text-gray-400 text-sm mt-2">AI Enhancement & Super Resolution Engine</p>
+                <p class="text-gray-400 text-sm mt-2">AI Super-Resolution Engine Ready</p>
             </div>
 
             <!-- Preview & Resolution Settings Section (Hidden Initially) -->
@@ -62,9 +59,9 @@
                 <div class="mb-6">
                     <label class="block text-gray-400 text-sm font-semibold mb-2">Select Target Resolution:</label>
                     <div class="flex justify-center gap-3">
-                        <button class="res-btn bg-blue-600 text-white px-5 py-2 rounded-lg font-bold text-sm shadow transition" data-res="4k">4K Ultra HD</button>
-                        <button class="res-btn bg-[#1e293b] text-gray-400 border border-gray-700 px-5 py-2 rounded-lg font-bold text-sm hover:text-white transition" data-res="8k">8K Cinema</button>
-                        <button class="res-btn bg-[#1e293b] text-gray-400 border border-gray-700 px-5 py-2 rounded-lg font-bold text-sm hover:text-white transition" data-res="16k">16K Extreme</button>
+                        <button class="res-btn bg-blue-600 text-white px-5 py-2 rounded-lg font-bold text-sm shadow transition" data-res="4K">4K Ultra HD</button>
+                        <button class="res-btn bg-[#1e293b] text-gray-400 border border-gray-700 px-5 py-2 rounded-lg font-bold text-sm hover:text-white transition" data-res="8K">8K Cinema</button>
+                        <button class="res-btn bg-[#1e293b] text-gray-400 border border-gray-700 px-5 py-2 rounded-lg font-bold text-sm hover:text-white transition" data-res="16K">16K Extreme</button>
                     </div>
                 </div>
 
@@ -88,7 +85,7 @@
                     <button id="clear-btn" class="bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 font-semibold py-3 px-6 rounded-xl transition flex items-center gap-2">
                         <i class="fa-solid fa-trash-can"></i> Clear File
                     </button>
-                    <a id="download-btn" href="#" download="upscaled-output.png" class="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-8 rounded-xl transition shadow-lg inline-flex items-center gap-2">
+                    <a id="download-btn" href="#" download="upscaled-output" class="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-8 rounded-xl transition shadow-lg inline-flex items-center gap-2">
                         <i class="fa-solid fa-download"></i> Download File
                     </a>
                 </div>
@@ -102,7 +99,7 @@
         &copy; 2026 Pro Upscaler. Designed & Developed with passion by <strong class="text-white">Md Rashad Mahmud</strong>.
     </footer>
 
-    <!-- JavaScript Scripting -->
+    <!-- JavaScript Logic -->
     <script>
         const fileInput = document.getElementById('file-input');
         const previewContainer = document.getElementById('preview-container');
@@ -119,7 +116,7 @@
         let selectedFile = null;
         let chosenResolution = '4K';
 
-        // Format Tab Switching
+        // Tab Switching Filter
         formatTabs.forEach(btn => {
             btn.addEventListener('click', () => {
                 formatTabs.forEach(b => {
@@ -130,6 +127,13 @@
                 btn.classList.replace('bg-[#1e293b]', 'bg-blue-600');
                 btn.classList.remove('text-gray-400', 'border', 'border-gray-700');
                 btn.classList.add('text-white');
+
+                const targetType = btn.getAttribute('data-type');
+                if (targetType === 'image') {
+                    fileInput.accept = 'image/*';
+                } else {
+                    fileInput.accept = 'video/*';
+                }
             });
         });
 
@@ -144,10 +148,11 @@
                 btn.classList.replace('bg-[#1e293b]', 'bg-blue-600');
                 btn.classList.remove('text-gray-400', 'border', 'border-gray-700');
                 btn.classList.add('text-white');
-                chosenResolution = btn.textContent.trim();
+                chosenResolution = btn.getAttribute('data-res');
             });
         });
 
+        // File Input Change Handling
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
@@ -172,6 +177,7 @@
             }
         });
 
+        // Clear Button Action
         clearBtn.addEventListener('click', () => {
             fileInput.value = '';
             selectedFile = null;
@@ -180,6 +186,7 @@
             resultContainer.classList.add('hidden');
         });
 
+        // Upscale Button Action
         upscaleBtn.addEventListener('click', () => {
             if (!selectedFile) return;
             
@@ -192,7 +199,12 @@
                 
                 selectedResLabel.textContent = chosenResolution;
                 resultPreview.innerHTML = mediaPreview.innerHTML;
+                
+                // Keep original file extension for download
+                const originalName = selectedFile.name;
                 downloadBtn.href = URL.createObjectURL(selectedFile);
+                downloadBtn.download = `upscaled-${chosenResolution}-${originalName}`;
+
                 previewContainer.classList.add('hidden');
                 resultContainer.classList.remove('hidden');
                 
