@@ -16,127 +16,124 @@
             <h1 class="text-2xl font-bold text-gray-800">Pro<span class="text-blue-600">Upscaler</span></h1>
         </div>
         <span class="bg-blue-100 text-blue-800 py-1.5 px-4 rounded-full text-sm font-bold tracking-wide shadow-sm border border-blue-200">
-            Developer By Md Rasad Mahmud
+            Md Rasad Mahmud
         </span>
     </header>
 
-    <!-- Main Content -->
-    <main class="flex-grow flex flex-col items-center justify-center p-6">
-        <div class="bg-white p-8 rounded-3xl shadow-xl w-full max-w-2xl text-center border border-gray-100">
-            
-            <!-- Tabs for Image & Video -->
-            <div class="flex justify-center mb-8 bg-gray-100 p-1 rounded-xl">
-                <button id="tab-image" class="flex-1 py-3 px-6 rounded-lg font-bold text-blue-600 bg-white shadow-sm transition-all" onclick="switchTab('image')">
-                    <i class="fa-regular fa-image mr-2"></i> Image Upscale
-                </button>
-                <button id="tab-video" class="flex-1 py-3 px-6 rounded-lg font-bold text-gray-500 hover:text-gray-700 transition-all" onclick="switchTab('video')">
-                    <i class="fa-solid fa-video mr-2"></i> Video Upscale
-                </button>
+    <!-- Main Container -->
+    <main class="flex-grow max-w-4xl w-full mx-auto p-6 mt-6">
+        <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+            <h2 class="text-xl font-semibold mb-6 text-gray-700 flex items-center gap-2">
+                <i class="fa-solid fa-cloud-arrow-up text-blue-500"></i> Upload Image or Video for AI Upscaling
+            </h2>
+
+            <!-- Upload Box -->
+            <div id="drop-zone" class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center bg-gray-50 hover:bg-gray-100 transition cursor-pointer relative">
+                <input type="file" id="file-input" class="absolute inset-0 opacity-0 cursor-pointer" accept="image/*,video/*">
+                <i class="fa-solid fa-file-arrow-up text-4xl text-blue-500 mb-3"></i>
+                <p class="text-gray-600 font-medium">Drag & drop your file here, or <span class="text-blue-600 underline">Browse</span></p>
+                <p class="text-gray-400 text-sm mt-1">Supports PNG, JPG, MP4, MOV</p>
             </div>
 
-            <h2 id="main-title" class="text-3xl font-extrabold mb-3 text-gray-900">Enhance Image Quality</h2>
-            <p id="sub-title" class="text-gray-500 mb-8 font-medium">Upload your low-resolution file and select target resolution.</p>
-
-            <!-- Upload Area -->
-            <div id="drop-zone" class="border-4 border-dashed border-blue-200 rounded-2xl p-10 hover:border-blue-500 hover:bg-blue-50 transition-all cursor-pointer relative group">
-                <input type="file" id="file-upload" class="hidden" accept="image/*, video/*">
-                <div class="flex flex-col items-center pointer-events-none">
-                    <i id="upload-icon" class="fa-solid fa-cloud-arrow-up text-5xl text-blue-400 mb-4 group-hover:text-blue-600 transition-colors"></i>
-                    <span id="file-name" class="text-lg font-medium text-gray-600">
-                        Drag & Drop your <span id="file-type-text">image</span> here, or <span class="text-blue-500 font-semibold">Browse</span>
-                    </span>
+            <!-- Preview Section (Hidden initially) -->
+            <div id="preview-container" class="hidden mt-6 text-center">
+                <h3 class="text-sm font-semibold text-gray-500 mb-2">Selected File Preview:</h3>
+                <div id="media-preview" class="max-h-64 mx-auto rounded-lg overflow-hidden border border-gray-200 shadow-sm inline-block"></div>
+                
+                <!-- Action Buttons: Clear & Upscale -->
+                <div class="flex justify-center gap-4 mt-4">
+                    <button id="clear-btn" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg transition shadow-md flex items-center gap-2">
+                        <i class="fa-solid fa-trash-can"></i> Clear File
+                    </button>
+                    <button id="upscale-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded-lg transition shadow-lg flex items-center gap-2">
+                        <i class="fa-solid fa-bolt"></i> Start Upscaling (4K/16K)
+                    </button>
                 </div>
             </div>
 
-            <!-- Resolution Selector -->
-            <div class="mt-6 text-left">
-                <label class="block text-sm font-bold text-gray-700 mb-3">Select Target Resolution:</label>
-                <div class="flex gap-4">
-                    <button id="res-4k" class="res-btn flex-1 py-3 border-2 border-blue-600 bg-blue-50 text-blue-700 font-bold rounded-xl transition-all shadow-sm" onclick="selectRes('4k')">4K UHD</button>
-                    <button id="res-8k" class="res-btn flex-1 py-3 border-2 border-gray-200 text-gray-500 font-bold rounded-xl hover:border-blue-300 transition-all" onclick="selectRes('8k')">8K Cinema</button>
-                    <button id="res-16k" class="res-btn flex-1 py-3 border-2 border-gray-200 text-gray-500 font-bold rounded-xl hover:border-blue-300 transition-all" onclick="selectRes('16k')">16K Ultra</button>
+            <!-- Result Section (Hidden initially) -->
+            <div id="result-container" class="hidden mt-8 text-center border-t pt-6">
+                <h3 class="text-lg font-bold text-gray-700 mb-3"><i class="fa-solid fa-circle-check text-green-500"></i> Upscaling Successful!</h3>
+                <div id="result-preview" class="max-h-72 mx-auto rounded-lg overflow-hidden border border-gray-200 shadow-md inline-block mb-4"></div>
+                <div>
+                    <a id="download-btn" href="#" download="upscaled-output.png" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-xl transition shadow-lg inline-flex items-center gap-2">
+                        <i class="fa-solid fa-download"></i> Download Upscaled File
+                    </a>
                 </div>
             </div>
-
-            <!-- Action Button -->
-            <button id="upscale-btn" class="mt-8 w-full py-4 rounded-xl font-bold text-white text-lg bg-gray-300 cursor-not-allowed transition-all" disabled>
-                Start Upscaling
-            </button>
         </div>
     </main>
 
-    <!-- Footer Section -->
-    <footer class="bg-gray-900 text-gray-400 py-6 text-center text-sm">
-        <p>&copy; 2026 Pro Upscaler. All rights reserved.</p>
-        <p class="mt-2 text-base">Developed with <i class="fa-solid fa-heart text-red-500 mx-1"></i> by <span class="text-white font-bold tracking-wider">Md Rasad Mahmud</span></p>
+    <!-- Footer -->
+    <footer class="bg-white text-center py-4 border-t border-gray-200 text-gray-500 text-sm">
+        &copy; 2026 Pro Upscaler. Developed with passion by <strong>Md Rasad Mahmud</strong>.
     </footer>
 
-    <!-- Interactive JavaScript -->
+    <!-- JavaScript for Interactivity -->
     <script>
-        const dropZone = document.getElementById('drop-zone');
-        const fileUpload = document.getElementById('file-upload');
-        const fileName = document.getElementById('file-name');
+        const fileInput = document.getElementById('file-input');
+        const previewContainer = document.getElementById('preview-container');
+        const mediaPreview = document.getElementById('media-preview');
+        const clearBtn = document.getElementById('clear-btn');
         const upscaleBtn = document.getElementById('upscale-btn');
-        
-        // Tab Elements
-        const tabImage = document.getElementById('tab-image');
-        const tabVideo = document.getElementById('tab-video');
-        const mainTitle = document.getElementById('main-title');
-        const uploadIcon = document.getElementById('upload-icon');
+        const resultContainer = document.getElementById('result-container');
+        const resultPreview = document.getElementById('result-preview');
+        const downloadBtn = document.getElementById('download-btn');
 
-        let currentMode = 'image';
-        let currentRes = '4k';
+        let selectedFile = null;
 
-        // Handle Resolution Selection
-        function selectRes(res) {
-            currentRes = res;
-            const buttons = {
-                '4k': document.getElementById('res-4k'),
-                '8k': document.getElementById('res-8k'),
-                '16k': document.getElementById('res-16k')
-            };
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                selectedFile = file;
+                mediaPreview.innerHTML = '';
+                
+                if (file.type.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    img.src = URL.createObjectURL(file);
+                    img.className = 'max-h-60 object-contain';
+                    mediaPreview.appendChild(img);
+                } else if (file.type.startsWith('video/')) {
+                    const video = document.createElement('video');
+                    video.src = URL.createObjectURL(file);
+                    video.controls = true;
+                    video.className = 'max-h-60 object-contain';
+                    mediaPreview.appendChild(video);
+                }
 
-            for (let key in buttons) {
-                buttons[key].className = 'res-btn flex-1 py-3 border-2 border-gray-200 text-gray-500 font-bold rounded-xl hover:border-blue-300 transition-all';
-            }
-            buttons[res].className = 'res-btn flex-1 py-3 border-2 border-blue-600 bg-blue-50 text-blue-700 font-bold rounded-xl transition-all shadow-sm';
-        }
-
-        // Handle Tab Switching
-        function switchTab(mode) {
-            currentMode = mode;
-            fileName.innerHTML = `Drag & Drop your <span id="file-type-text">${mode}</span> here, or <span class="text-blue-500 font-semibold">Browse</span>`;
-            upscaleBtn.disabled = true;
-            upscaleBtn.className = 'mt-8 w-full py-4 rounded-xl font-bold text-white text-lg bg-gray-300 cursor-not-allowed transition-all';
-            
-            if (mode === 'image') {
-                tabImage.className = 'flex-1 py-3 px-6 rounded-lg font-bold text-blue-600 bg-white shadow-sm transition-all';
-                tabVideo.className = 'flex-1 py-3 px-6 rounded-lg font-bold text-gray-500 hover:text-gray-700 transition-all';
-                mainTitle.innerText = 'Enhance Image Quality';
-                uploadIcon.className = 'fa-regular fa-image text-5xl text-blue-400 mb-4 group-hover:text-blue-600 transition-colors';
-                fileUpload.accept = 'image/*';
-            } else {
-                tabVideo.className = 'flex-1 py-3 px-6 rounded-lg font-bold text-blue-600 bg-white shadow-sm transition-all';
-                tabImage.className = 'flex-1 py-3 px-6 rounded-lg font-bold text-gray-500 hover:text-gray-700 transition-all';
-                mainTitle.innerText = 'Upgrade Video Quality';
-                uploadIcon.className = 'fa-solid fa-film text-5xl text-blue-400 mb-4 group-hover:text-blue-600 transition-colors';
-                fileUpload.accept = 'video/*';
-            }
-        }
-
-        dropZone.addEventListener('click', () => fileUpload.click());
-
-        fileUpload.addEventListener('change', function() {
-            if(this.files && this.files[0]) {
-                setFile(this.files[0].name);
+                previewContainer.classList.remove('hidden');
             }
         });
 
-        function setFile(name) {
-            fileName.innerHTML = `<span class="text-green-600 font-bold"><i class="fa-solid fa-check-circle mr-2"></i> ${name}</span>`;
-            upscaleBtn.disabled = false;
-            upscaleBtn.className = 'mt-8 w-full py-4 rounded-xl font-bold text-white text-lg bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-blue-500/50 transition-all';
-        }
+        // Clear button logic
+        clearBtn.addEventListener('click', () => {
+            fileInput.value = '';
+            selectedFile = null;
+            mediaPreview.innerHTML = '';
+            previewContainer.classList.add('hidden');
+            resultContainer.classList.add('hidden');
+        });
+
+        // Upscale button simulation/action trigger
+        upscaleBtn.addEventListener('click', () => {
+            if (!selectedFile) return;
+            
+            upscaleBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing AI...';
+            upscaleBtn.disabled = true;
+
+            setTimeout(() => {
+                upscaleBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Start Upscaling (4K/16K)';
+                upscaleBtn.disabled = false;
+                
+                // Show mock/result preview (In production, this connects to Replicate AI output)
+                resultPreview.innerHTML = mediaPreview.innerHTML;
+                downloadBtn.href = URL.createObjectURL(selectedFile);
+                resultContainer.classList.remove('hidden');
+                
+                // Scroll to result
+                resultContainer.scrollIntoView({ behavior: 'smooth' });
+            }, 2500);
+        });
     </script>
 </body>
 </html>
