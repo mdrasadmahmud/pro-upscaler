@@ -28,37 +28,50 @@
     <!-- Main Content Layout -->
     <main class="flex-grow max-w-5xl w-full mx-auto p-6 mt-6">
         
-        <!-- Format Selection Tabs (Images & Videos only) -->
+        <!-- Format Selection Tabs -->
         <div class="flex justify-center gap-4 mb-6">
-            <button class="tab-btn bg-blue-600 text-white px-8 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg transition" data-target="image">
-                <i class="fa-solid fa-image"></i> Images (JPG, PNG)
+            <button class="format-tab bg-blue-600 text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg transition" data-format="jpg">
+                <i class="fa-solid fa-file-image"></i> JPG Format
             </button>
-            <button class="tab-btn bg-[#1e293b] text-gray-400 hover:text-white px-8 py-2.5 rounded-xl font-bold flex items-center gap-2 border border-gray-700 transition" data-target="video">
-                <i class="fa-solid fa-video"></i> Video
+            <button class="format-tab bg-[#1e293b] text-gray-400 hover:text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 border border-gray-700 transition" data-format="png">
+                <i class="fa-solid fa-file-image"></i> PNG Format
+            </button>
+            <button class="format-tab bg-[#1e293b] text-gray-400 hover:text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 border border-gray-700 transition" data-format="video">
+                <i class="fa-solid fa-file-video"></i> Video (MP4)
             </button>
         </div>
 
         <!-- Upload Card Box -->
         <div class="bg-[#1e293b] rounded-3xl shadow-2xl p-8 border border-gray-800 relative">
             
-            <div id="drop-zone" class="border-2 border-dashed border-gray-600 rounded-2xl p-12 text-center bg-[#0f172a]/50 hover:bg-[#0f172a] transition cursor-pointer relative group">
+            <div id="drop-zone" class="border-2 border-dashed border-gray-600 rounded-2xl p-10 text-center bg-[#0f172a]/50 hover:bg-[#0f172a] transition cursor-pointer relative group">
                 <input type="file" id="file-input" class="absolute inset-0 opacity-0 cursor-pointer" accept="image/*,video/*">
                 <div class="w-16 h-16 bg-blue-500/10 text-blue-400 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition shadow-inner">
                     <i class="fa-solid fa-cloud-arrow-up text-2xl"></i>
                 </div>
                 <p class="text-gray-200 font-semibold text-lg">Drop your file here, or <span class="text-blue-400 underline">Browse files</span></p>
-                <p class="text-gray-400 text-sm mt-2">Supports JPG, PNG, MP4, MOV — High Quality AI Enhancement</p>
+                <p class="text-gray-400 text-sm mt-2">AI Enhancement & Super Resolution Engine</p>
             </div>
 
-            <!-- Preview & Action Section (Hidden Initially) -->
-            <div id="preview-container" class="hidden mt-8 text-center bg-[#0f172a] p-6 rounded-2xl border border-gray-800">
+            <!-- Preview & Resolution Settings Section (Hidden Initially) -->
+            <div id="preview-container" class="hidden mt-6 text-center bg-[#0f172a] p-6 rounded-2xl border border-gray-800">
                 <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Selected File Preview</h3>
-                <div id="media-preview" class="max-h-72 mx-auto rounded-xl overflow-hidden border border-gray-700 shadow-md inline-block bg-gray-900 p-2"></div>
+                <div id="media-preview" class="max-h-60 mx-auto rounded-xl overflow-hidden border border-gray-700 shadow-md inline-block bg-gray-900 p-2 mb-4"></div>
                 
-                <!-- Main Upscaler Button -->
-                <div class="mt-6">
+                <!-- Resolution Options (4K, 8K, 16K) -->
+                <div class="mb-6">
+                    <label class="block text-gray-400 text-sm font-semibold mb-2">Select Target Resolution:</label>
+                    <div class="flex justify-center gap-3">
+                        <button class="res-btn bg-blue-600 text-white px-5 py-2 rounded-lg font-bold text-sm shadow transition" data-res="4k">4K Ultra HD</button>
+                        <button class="res-btn bg-[#1e293b] text-gray-400 border border-gray-700 px-5 py-2 rounded-lg font-bold text-sm hover:text-white transition" data-res="8k">8K Cinema</button>
+                        <button class="res-btn bg-[#1e293b] text-gray-400 border border-gray-700 px-5 py-2 rounded-lg font-bold text-sm hover:text-white transition" data-res="16k">16K Extreme</button>
+                    </div>
+                </div>
+
+                <!-- Main Upscale Button -->
+                <div>
                     <button id="upscale-btn" class="w-full max-w-md mx-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-3 px-8 rounded-xl transition shadow-lg flex items-center justify-center gap-2 text-lg">
-                        <i class="fa-solid fa-bolt"></i> Start Upscaling (4K/16K)
+                        <i class="fa-solid fa-bolt"></i> Start AI Upscaling
                     </button>
                 </div>
             </div>
@@ -66,9 +79,9 @@
             <!-- Result Section with Clear & Download options at the bottom -->
             <div id="result-container" class="hidden mt-8 text-center border-t border-gray-800 pt-8">
                 <div class="inline-flex items-center gap-2 bg-green-500/20 text-green-400 border border-green-500/30 px-4 py-1.5 rounded-full text-sm font-bold mb-4">
-                    <i class="fa-solid fa-circle-check"></i> Upscaling Successful!
+                    <i class="fa-solid fa-circle-check"></i> Upscaling Successful! (<span id="selected-res-label">4K</span>)
                 </div>
-                <div id="result-preview" class="max-h-80 mx-auto rounded-xl overflow-hidden border border-gray-700 shadow-lg inline-block bg-gray-900 p-2 mb-6"></div>
+                <div id="result-preview" class="max-h-72 mx-auto rounded-xl overflow-hidden border border-gray-700 shadow-lg inline-block bg-gray-900 p-2 mb-6"></div>
                 
                 <!-- Bottom Action Controls: Clear & Download -->
                 <div class="flex justify-center items-center gap-4 flex-wrap">
@@ -99,18 +112,39 @@
         const resultContainer = document.getElementById('result-container');
         const resultPreview = document.getElementById('result-preview');
         const downloadBtn = document.getElementById('download-btn');
-        const tabBtns = document.querySelectorAll('.tab-btn');
+        const formatTabs = document.querySelectorAll('.format-tab');
+        const resBtns = document.querySelectorAll('.res-btn');
+        const selectedResLabel = document.getElementById('selected-res-label');
 
         let selectedFile = null;
+        let chosenResolution = '4K';
 
-        // Tab Switching Logic
-        tabBtns.forEach(btn => {
+        // Format Tab Switching
+        formatTabs.forEach(btn => {
             btn.addEventListener('click', () => {
-                tabBtns.forEach(b => b.classList.replace('bg-blue-600', 'bg-[#1e293b]'));
-                tabBtns.forEach(b => b.classList.add('text-gray-400', 'border', 'border-gray-700'));
+                formatTabs.forEach(b => {
+                    b.classList.replace('bg-blue-600', 'bg-[#1e293b]');
+                    b.classList.add('text-gray-400', 'border', 'border-gray-700');
+                    b.classList.remove('text-white');
+                });
                 btn.classList.replace('bg-[#1e293b]', 'bg-blue-600');
                 btn.classList.remove('text-gray-400', 'border', 'border-gray-700');
                 btn.classList.add('text-white');
+            });
+        });
+
+        // Resolution Selection Logic
+        resBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                resBtns.forEach(b => {
+                    b.classList.replace('bg-blue-600', 'bg-[#1e293b]');
+                    b.classList.add('text-gray-400', 'border', 'border-gray-700');
+                    b.classList.remove('text-white');
+                });
+                btn.classList.replace('bg-[#1e293b]', 'bg-blue-600');
+                btn.classList.remove('text-gray-400', 'border', 'border-gray-700');
+                btn.classList.add('text-white');
+                chosenResolution = btn.textContent.trim();
             });
         });
 
@@ -123,13 +157,13 @@
                 if (file.type.startsWith('image/')) {
                     const img = document.createElement('img');
                     img.src = URL.createObjectURL(file);
-                    img.className = 'max-h-64 object-contain rounded-lg';
+                    img.className = 'max-h-56 object-contain rounded-lg';
                     mediaPreview.appendChild(img);
                 } else if (file.type.startsWith('video/')) {
                     const video = document.createElement('video');
                     video.src = URL.createObjectURL(file);
                     video.controls = true;
-                    video.className = 'max-h-64 object-contain rounded-lg';
+                    video.className = 'max-h-56 object-contain rounded-lg';
                     mediaPreview.appendChild(video);
                 }
 
@@ -149,13 +183,14 @@
         upscaleBtn.addEventListener('click', () => {
             if (!selectedFile) return;
             
-            upscaleBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing AI...';
+            upscaleBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing ${chosenResolution}...`;
             upscaleBtn.disabled = true;
 
             setTimeout(() => {
-                upscaleBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Start Upscaling (4K/16K)';
+                upscaleBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Start AI Upscaling';
                 upscaleBtn.disabled = false;
                 
+                selectedResLabel.textContent = chosenResolution;
                 resultPreview.innerHTML = mediaPreview.innerHTML;
                 downloadBtn.href = URL.createObjectURL(selectedFile);
                 previewContainer.classList.add('hidden');
