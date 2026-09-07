@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Upscaler by Md Rashad Mahmud</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-[#0f172a] text-gray-100 flex flex-col min-h-screen font-sans">
+
+    <!-- Header Section -->
+    <header class="bg-[#1e293b] border-b border-gray-800 py-4 px-8 flex justify-between items-center shadow-md">
+        <div class="flex items-center gap-3">
+            <div class="bg-blue-600 text-white p-2.5 rounded-xl shadow-lg flex items-center justify-center">
+                <i class="fa-solid fa-wand-magic-sparkles text-xl"></i>
+            </div>
+            <h1 class="text-2xl font-black tracking-tight text-white">Pro<span class="text-blue-500">Upscaler</span></h1>
+        </div>
+        <div class="flex items-center gap-2 bg-[#0f172a] border border-gray-700 py-1.5 px-4 rounded-full shadow-inner">
+            <i class="fa-solid fa-circle-user text-blue-400"></i>
+            <span class="text-gray-200 text-sm font-bold tracking-wide">
+                Md Rashad Mahmud
+            </span>
+        </div>
+    </header>
+
+    <!-- Main Content Layout -->
+    <main class="flex-grow max-w-5xl w-full mx-auto p-6 mt-6">
+        
+        <!-- Format Selection Tabs -->
+        <div class="flex justify-center gap-4 mb-6">
+            <button class="format-tab bg-blue-600 text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg transition" data-type="image">
+                <i class="fa-solid fa-file-image"></i> Images (JPG / PNG)
+            </button>
+            <button class="format-tab bg-[#1e293b] text-gray-400 hover:text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 border border-gray-700 transition" data-type="video">
+                <i class="fa-solid fa-file-video"></i> Video (MP4 / MOV)
+            </button>
+        </div>
+
+        <!-- Upload Card Box -->
+        <div class="bg-[#1e293b] rounded-3xl shadow-2xl p-8 border border-gray-800 relative">
+            
+            <div id="drop-zone" class="border-2 border-dashed border-gray-600 rounded-2xl p-10 text-center bg-[#0f172a]/50 hover:bg-[#0f172a] transition cursor-pointer relative group">
+                <input type="file" id="file-input" class="absolute inset-0 opacity-0 cursor-pointer" accept="image/*">
+                <div class="w-16 h-16 bg-blue-500/10 text-blue-400 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition shadow-inner">
+                    <i class="fa-solid fa-cloud-arrow-up text-2xl"></i>
+                </div>
+                <p class="text-gray-200 font-semibold text-lg">Drop your file here, or <span class="text-blue-400 underline">Browse files</span></p>
+                <p class="text-gray-400 text-sm mt-2">Real AI Super-Resolution Engine Active</p>
+            </div>
+
+            <!-- Preview & Resolution Settings Section (Hidden Initially) -->
+            <div id="preview-container" class="hidden mt-6 text-center bg-[#0f172a] p-6 rounded-2xl border border-gray-800">
+                <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3">Selected File Preview</h3>
+                <div id="media-preview" class="max-h-60 mx-auto rounded-xl overflow-hidden border border-gray-700 shadow-md inline-block bg-gray-900 p-2 mb-4"></div>
+                
+                <!-- Resolution Options (4K, 8K, 16K) -->
+                <div class="mb-6">
+                    <label class="block text-gray-400 text-sm font-semibold mb-2">Select Target Resolution:</label>
+                    <div class="flex justify-center gap-3">
+                        <button class="res-btn bg-blue-600 text-white px-5 py-2 rounded-lg font-bold text-sm shadow transition" data-res="4K">4K Ultra HD</button>
+                        <button class="res-btn bg-[#1e293b] text-gray-400 border border-gray-700 px-5 py-2 rounded-lg font-bold text-sm hover:text-white transition" data-res="8K">8K Cinema</button>
+                        <button class="res-btn bg-[#1e293b] text-gray-400 border border-gray-700 px-5 py-2 rounded-lg font-bold text-sm hover:text-white transition" data-res="16K">16K Extreme</button>
+                    </div>
+                </div>
+
+                <!-- Main Upscale Button -->
+                <div>
+                    <button id="upscale-btn" class="w-full max-w-md mx-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-3 px-8 rounded-xl transition shadow-lg flex items-center justify-center gap-2 text-lg">
+                        <i class="fa-solid fa-bolt"></i> Start Real AI Upscaling
+                    </button>
+                </div>
+            </div>
+
+            <!-- Result Section with Clear & Download options at the bottom -->
+            <div id="result-container" class="hidden mt-8 text-center border-t border-gray-800 pt-8">
+                <div class="inline-flex items-center gap-2 bg-green-500/20 text-green-400 border border-green-500/30 px-4 py-1.5 rounded-full text-sm font-bold mb-4">
+                    <i class="fa-solid fa-circle-check"></i> AI Upscaling Successful! (<span id="selected-res-label">4K</span>)
+                </div>
+                <div id="result-preview" class="max-h-72 mx-auto rounded-xl overflow-hidden border border-gray-700 shadow-lg inline-block bg-gray-900 p-2 mb-6"></div>
+                
+                <!-- Bottom Action Controls: Clear & Download -->
+                <div class="flex justify-center items-center gap-4 flex-wrap">
+                    <button id="clear-btn" class="bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 font-semibold py-3 px-6 rounded-xl transition flex items-center gap-2">
+                        <i class="fa-solid fa-trash-can"></i> Clear File
+                    </button>
+                    <a id="download-btn" href="#" download="upscaled-output.png" target="_blank" class="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-8 rounded-xl transition shadow-lg inline-flex items-center gap-2">
+                        <i class="fa-solid fa-download"></i> Download Upscaled File
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#1e293b] text-center py-5 border-t border-gray-800 text-gray-400 text-sm font-medium">
+        &copy; 2026 Pro Upscaler. Designed & Developed with passion by <strong class="text-white">Md Rashad Mahmud</strong>.
+    </footer>
+
+    <!-- Frontend Scripting with Real API Integration -->
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const previewContainer = document.getElementById('preview-container');
+        const mediaPreview = document.getElementById('media-preview');
+        const clearBtn = document.getElementById('clear-btn');
+        const upscaleBtn = document.getElementById('upscale-btn');
+        const resultContainer = document.getElementById('result-container');
+        const resultPreview = document.getElementById('result-preview');
+        const downloadBtn = document.getElementById('download-btn');
+        const formatTabs = document.querySelectorAll('.format-tab');
+        const resBtns = document.querySelectorAll('.res-btn');
+        const selectedResLabel = document.getElementById('selected-res-label');
+
+        let selectedFile = null;
+        let chosenResolution = '4K';
+        let fileBase64 = null;
+
+        formatTabs.forEach(btn => {
+            btn.addEventListener('click', () => {
+                formatTabs.forEach(b => {
+                    b.classList.replace('bg-blue-600', 'bg-[#1e293b]');
+                    b.classList.add('text-gray-400', 'border', 'border-gray-700');
+                    b.classList.remove('text-white');
+                });
+                btn.classList.replace('bg-[#1e293b]', 'bg-blue-600');
+                btn.classList.remove('text-gray-400', 'border', 'border-gray-700');
+                btn.classList.add('text-white');
+
+                const targetType = btn.getAttribute('data-type');
+                fileInput.accept = targetType === 'image' ? 'image/*' : 'video/*';
+            });
+        });
+
+        resBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                resBtns.forEach(b => {
+                    b.classList.replace('bg-blue-600', 'bg-[#1e293b]');
+                    b.classList.add('text-gray-400', 'border', 'border-gray-700');
+                    b.classList.remove('text-white');
+                });
+                btn.classList.replace('bg-[#1e293b]', 'bg-blue-600');
+                btn.classList.remove('text-gray-400', 'border', 'border-gray-700');
+                btn.classList.add('text-white');
+                chosenResolution = btn.getAttribute('data-res');
+            });
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                selectedFile = file;
+                const reader = new FileReader();
+                reader.onload = function(uploadEvent) {
+                    fileBase64 = uploadEvent.target.result;
+                };
+                reader.readAsDataURL(file);
+
+                mediaPreview.innerHTML = '';
+                if (file.type.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    img.src = URL.createObjectURL(file);
+                    img.className = 'max-h-56 object-contain rounded-lg';
+                    mediaPreview.appendChild(img);
+                } else if (file.type.startsWith('video/')) {
+                    const video = document.createElement('video');
+                    video.src = URL.createObjectURL(file);
+                    video.controls = true;
+                    video.className = 'max-h-56 object-contain rounded-lg';
+                    mediaPreview.appendChild(video);
+                }
+
+                previewContainer.classList.remove('hidden');
+                resultContainer.classList.add('hidden');
+            }
+        });
+
+        clearBtn.addEventListener('click', () => {
+            fileInput.value = '';
+            selectedFile = null;
+            fileBase64 = null;
+            mediaPreview.innerHTML = '';
+            previewContainer.classList.add('hidden');
+            resultContainer.classList.add('hidden');
+        });
+
+        upscaleBtn.addEventListener('click', async () => {
+            if (!selectedFile || !fileBase64) return;
+            
+            upscaleBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> AI Processing to ${chosenResolution}...`;
+            upscaleBtn.disabled = true;
+
+            try {
+                const response = await fetch('/api/upscale', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        image: fileBase64,
+                        resolution: chosenResolution
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.output) {
+                    upscaleBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Start Real AI Upscaling';
+                    upscaleBtn.disabled = false;
+                    
+                    selectedResLabel.textContent = chosenResolution;
+                    resultPreview.innerHTML = `<img src="${data.output}" class="max-h-72 object-contain rounded-lg">`;
+                    downloadBtn.href = data.output;
+                    downloadBtn.download = `upscaled-${chosenResolution}-${selectedFile.name}`;
+
+                    previewContainer.classList.add('hidden');
+                    resultContainer.classList.remove('hidden');
+                    resultContainer.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    throw new Error(data.error || 'Something went wrong during AI processing.');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+                upscaleBtn.innerHTML = '<i class="fa-solid fa-bolt"></i> Start Real AI Upscaling';
+                upscaleBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
